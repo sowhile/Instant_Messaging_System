@@ -10,7 +10,7 @@ import java.util.HashMap;
  */
 public class ManageClientConnectServerThread {
     //key是userID，value是ClientConnectServerThread线程
-    private static HashMap<String, ClientConnectServerThread> hashMap = new HashMap<>();
+    private static final HashMap<String, ClientConnectServerThread> hashMap = new HashMap<>();
 
     public static void addClientServerThread(String userID, ClientConnectServerThread clientConnectServerThread) {
         hashMap.put(userID, clientConnectServerThread);

@@ -15,7 +15,7 @@ import java.net.Socket;
  * 2022/11/22 16:22
  */
 public class ClientConnectServerThread extends Thread {
-    private Socket socket;
+    private final Socket socket;
     private boolean loop = true;
 
     public ClientConnectServerThread(Socket socket) {

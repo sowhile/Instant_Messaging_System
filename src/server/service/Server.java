@@ -52,6 +52,8 @@ public class Server {
                 Message message = new Message();
                 if (checkUser(user.getUserID(), user.getPassword())) {
                     message.setMesType(MessageType.MESSAGE_LOGIN_SUCCESS);
+                    message.setSender("server");
+                    message.setReceiver(user.getUserID());
                     objectOutputStream.writeObject(message);
                     //创建一个线程，和客户端保持通讯
                     ServerConnectClientThread serverConnectClientThread = new ServerConnectClientThread(user.getUserID(), socket);

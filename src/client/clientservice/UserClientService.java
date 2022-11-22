@@ -19,7 +19,7 @@ import java.net.Socket;
  */
 public class UserClientService {
 
-    private User user = new User();
+    private final User user = new User();
     private Socket socket;
 
     //与服务器通信。检查用户名和密码

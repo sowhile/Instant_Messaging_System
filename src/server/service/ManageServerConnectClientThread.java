@@ -11,7 +11,7 @@ import java.util.Set;
  * 2022/11/22 21:07
  */
 public class ManageServerConnectClientThread {
-    private static HashMap<String, ServerConnectClientThread> hashMap = new HashMap<>();
+    private static final HashMap<String, ServerConnectClientThread> hashMap = new HashMap<>();
 
     //添加线程对象到hashmap
     public static void addServerClientThread(String userID, ServerConnectClientThread serverConnectClientThread) {

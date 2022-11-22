@@ -40,7 +40,7 @@ public class ClientView {
                         //二级菜单
                         System.out.println("==============登录成功！==============");
                         while (loop2) {
-                            System.out.println("==============欢迎," + userID + "==============");
+                            System.out.println("==============欢迎, " + userID + "==============");
                             System.out.println("\t\t\t1.显示在线用户列表");
                             System.out.println("\t\t\t2.群发消息");
                             System.out.println("\t\t\t3.私聊消息");
@@ -65,13 +65,6 @@ public class ClientView {
                                     System.out.println("发送文件");
                                     break;
                                 case '5':
-//                                    ManageClientConnectServerThread.getClientServerThread(userID).setLoop(false);
-//                                    try {
-//                                        ManageClientConnectServerThread.getClientServerThread(userID).getSocket().close();
-//                                    } catch (IOException e) {
-//                                        throw new RuntimeException(e);
-//                                    }
-//                                    ManageClientConnectServerThread.removeClientServerThread(userID);
                                 case 'q':
                                 case 'Q':
                                     loop2 = false;

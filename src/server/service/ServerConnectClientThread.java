@@ -17,9 +17,9 @@ import java.net.Socket;
  */
 public class ServerConnectClientThread extends Thread {
 
-    private String userID;
-    private Socket socket;
-    private boolean loop = true;
+    private final String userID;
+    private final Socket socket;
+    private final boolean loop = true;
 
     public ServerConnectClientThread(String userID, Socket socket) {
         this.userID = userID;
