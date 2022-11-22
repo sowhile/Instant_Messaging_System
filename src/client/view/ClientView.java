@@ -1,6 +1,5 @@
 package client.view;
 
-
 import client.clientservice.UserClientService;
 
 /**
@@ -12,7 +11,11 @@ import client.clientservice.UserClientService;
 public class ClientView {
     //主菜单循环
     private boolean loop = true;
-    private UserClientService userClientService = new UserClientService();
+    private final UserClientService userClientService = new UserClientService();
+
+    public static void main(String[] args) {
+        new ClientView().mainMenu();
+    }
 
     public void mainMenu() {
         while (loop) {
@@ -59,6 +62,13 @@ public class ClientView {
                                     System.out.println("发送文件");
                                     break;
                                 case '5':
+//                                    ManageClientConnectServerThread.getClientServerThread(userID).setLoop(false);
+//                                    try {
+//                                        ManageClientConnectServerThread.getClientServerThread(userID).getSocket().close();
+//                                    } catch (IOException e) {
+//                                        throw new RuntimeException(e);
+//                                    }
+//                                    ManageClientConnectServerThread.removeClientServerThread(userID);
                                 case 'q':
                                 case 'Q':
                                     loop2 = false;
@@ -69,8 +79,7 @@ public class ClientView {
                                     break;
                             }
                         }
-                    } else
-                        System.out.println("用户名或密码错误！");
+                    } else System.out.println("用户名或密码错误！");
 
                     break;
                 case '9':
@@ -78,9 +87,5 @@ public class ClientView {
                     break;
             }
         }
-    }
-
-    public static void main(String[] args) {
-        new ClientView().mainMenu();
     }
 }

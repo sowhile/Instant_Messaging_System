@@ -22,6 +22,7 @@ public class UserClientService {
     private User user = new User();
     private Socket socket;
 
+    //与服务器通信。检查用户名和密码
     public boolean checkUser(String userID, String pwd) {
         boolean check = false;
         user.setUserID(userID);
@@ -39,7 +40,7 @@ public class UserClientService {
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-        if (message.getMesType().equals(MessageType.MESSAGE_LOGIN_SUCCESS.getType())) {
+        if (message.getMesType().equals(MessageType.MESSAGE_LOGIN_SUCCESS)) {
             //创建一个和服务器端保持通讯的线程
             ClientConnectServerThread clientConnectServerThread = new ClientConnectServerThread(socket);
             clientConnectServerThread.setName("clientConnectServerThread");
@@ -55,5 +56,18 @@ public class UserClientService {
             }
         }
         return check;
+    }
+
+    //向服务器端请求在线用户列表
+    public void getOnlineFriendList() {
+        //发送一个MESSAGE_GET_ONLINE_FRIEND
+        Message message = new Message();
+        message.setMesType(MessageType.MESSAGE_GET_ONLINE_FRIEND);
+        try {
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream
+                    (ManageClientConnectServerThread.getClientServerThread(user.getUserID()).getSocket().getOutputStream());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

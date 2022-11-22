@@ -15,6 +15,7 @@ import java.net.Socket;
  */
 public class ClientConnectServerThread extends Thread {
     private Socket socket;
+    private boolean loop = true;
 
     public ClientConnectServerThread(Socket socket) {
         this.socket = socket;
@@ -24,9 +25,13 @@ public class ClientConnectServerThread extends Thread {
         return socket;
     }
 
+    public void setLoop(boolean loop) {
+        this.loop = loop;
+    }
+
     @Override
     public void run() {
-        while (true) {
+        while (loop) {
             System.out.println("客户端线程等待服务端发送消息...");
             try {
                 ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
