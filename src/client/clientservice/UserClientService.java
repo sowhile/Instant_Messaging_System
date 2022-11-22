@@ -39,7 +39,7 @@ public class UserClientService {
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-        if (message.getMesType().equals(MessageType.MESSAGE_LOGIN_SUCCESS.name())) {
+        if (message.getMesType().equals(MessageType.MESSAGE_LOGIN_SUCCESS.getType())) {
             //创建一个和服务器端保持通讯的线程
             ClientConnectServerThread clientConnectServerThread = new ClientConnectServerThread(socket);
             clientConnectServerThread.setName("clientConnectServerThread");
