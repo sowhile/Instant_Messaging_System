@@ -34,10 +34,11 @@ public class ClientView {
                     System.out.print("请输入密码(q返回)：");
                     String password = Utility.readString(64);
                     if (password.toLowerCase().charAt(0) == 'q') break;
-                    //到服务端验证是否合法
 
+                    //到服务端验证是否合法
                     if (userClientService.checkUser(userID, password)) {
                         //二级菜单
+                        System.out.println("==============登录成功！==============");
                         while (loop2) {
                             System.out.println("==============欢迎," + userID + "==============");
                             System.out.println("\t\t\t1.显示在线用户列表");
@@ -50,7 +51,9 @@ public class ClientView {
                             System.out.print("请输入(q返回)：");
                             switch (Utility.readChar()) {
                                 case '1':
-                                    System.out.println("显示在线用户列表");
+                                    System.out.println("==============当前在线用户列表==============");
+                                    userClientService.getOnlineFriendList();
+                                    Utility.readChar('r');
                                     break;
                                 case '2':
                                     System.out.println("群发消息");

@@ -60,12 +60,17 @@ public class UserClientService {
 
     //向服务器端请求在线用户列表
     public void getOnlineFriendList() {
-        //发送一个MESSAGE_GET_ONLINE_FRIEND
+        //发送一个MESSAGE_GET_ONLINE_FRIEND包
         Message message = new Message();
         message.setMesType(MessageType.MESSAGE_GET_ONLINE_FRIEND);
+        message.setSender(user.getUserID());
+        message.setReceiver("server");
         try {
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream
-                    (ManageClientConnectServerThread.getClientServerThread(user.getUserID()).getSocket().getOutputStream());
+            //此处是否可以直接用socket? 答案是可以
+//            ObjectOutputStream objectOutputStream = new ObjectOutputStream
+//                    (ManageClientConnectServerThread.getClientServerThread(user.getUserID()).getSocket().getOutputStream());
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+            objectOutputStream.writeObject(message);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

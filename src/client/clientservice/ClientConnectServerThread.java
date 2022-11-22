@@ -1,6 +1,7 @@
 package client.clientservice;
 
 import common.Message;
+import common.MessageType;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -32,12 +33,17 @@ public class ClientConnectServerThread extends Thread {
     @Override
     public void run() {
         while (loop) {
-            System.out.println("客户端线程等待服务端发送消息...");
+            //System.out.println("客户端线程等待服务端发送消息...");
             try {
                 ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
                 //如果服务器没有发送message对象，线程会阻塞在这里
                 Message message = (Message) objectInputStream.readObject();
-                //后面可以使用message
+                if (message.getMesType() == MessageType.MESSAGE_RET_ONLINE_FRIEND) {
+                    String[] onlineUsers = message.getContent().split(" ");
+                    for (int i = 0; i < onlineUsers.length; i++)
+                        System.out.println("\t\t\t\t用户" + (i + 1) + ": " + onlineUsers[i]);
+                }
+                //其他类型暂时不处理
             } catch (IOException | ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }

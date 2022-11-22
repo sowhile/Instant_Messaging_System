@@ -1,6 +1,7 @@
 package server.service;
 
 import java.util.HashMap;
+import java.util.Set;
 
 /**
  * @author sowhile
@@ -20,5 +21,14 @@ public class ManageServerConnectClientThread {
     //根据userID返回线程
     public static ServerConnectClientThread getServerClientThread(String userID) {
         return hashMap.get(userID);
+    }
+
+    //返回在线用户列表
+    public static String getOnlineUser() {
+        StringBuilder onlineUser = new StringBuilder();
+        Set<String> strings = hashMap.keySet();
+        for (String string : strings)
+            onlineUser.append(string).append(" ");
+        return onlineUser.toString();
     }
 }
