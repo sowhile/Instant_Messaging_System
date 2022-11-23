@@ -31,4 +31,13 @@ public class ManageServerConnectClientThread {
             onlineUser.append(string).append(" ");
         return onlineUser.toString();
     }
+
+    //移除某个线程
+    public static void removeServerClientThread(String userID) {
+        hashMap.remove(userID);
+    }
+
+    public static HashMap<String, ServerConnectClientThread> getAllThread() {
+        return hashMap;
+    }
 }

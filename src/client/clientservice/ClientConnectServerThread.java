@@ -1,8 +1,10 @@
 package client.clientservice;
 
+import client.view.ClientView;
 import common.Message;
 import common.MessageType;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
@@ -33,7 +35,6 @@ public class ClientConnectServerThread extends Thread {
     @Override
     public void run() {
         while (loop) {
-            //System.out.println("客户端线程等待服务端发送消息...");
             try {
                 ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
                 //如果服务器没有发送message对象，线程会阻塞在这里
@@ -42,6 +43,30 @@ public class ClientConnectServerThread extends Thread {
                     String[] onlineUsers = message.getContent().split(" ");
                     for (int i = 0; i < onlineUsers.length; i++)
                         System.out.println("\t\t\t\t用户" + (i + 1) + ": " + onlineUsers[i]);
+                }
+                //如果是普通消息，直接展示
+                else if (message.getMesType() == MessageType.MESSAGE_COMM_MES) {
+                    System.out.println("\n===============消息窗口===============");
+                    System.out.println("[" + message.getSender() + "] 对你说：" + message.getContent());
+                    if (!(message.getContent().equals("发送成功") || message.getContent().equals("没有该用户!"))) {
+                        System.out.println("===============欢迎, " + message.getReceiver() + "===============");
+                        ClientView.secondMenu();
+                    }
+                }
+                //接收文件
+                else if (message.getMesType() == MessageType.MESSAGE_FILE) {
+                    System.out.println("\n[" + message.getSender() + "] 发送 " + message.getSrc() + " 到本地 " + message.getDes());
+                    FileOutputStream fileOutputStream = new FileOutputStream(message.getDes());
+                    fileOutputStream.write(message.getBytes());
+                    fileOutputStream.close();
+                    System.out.println("文件保存成功！");
+                    System.out.println("===============欢迎, " + message.getReceiver() + "===============");
+                    ClientView.secondMenu();
+                }
+                //退出
+                else if (message.getMesType() == MessageType.MESSAGE_CLIENT_EXIT) {
+                    loop = false;
+                    break;
                 }
                 //其他类型暂时不处理
             } catch (IOException | ClassNotFoundException e) {

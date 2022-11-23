@@ -16,7 +16,11 @@ public enum MessageType {
     //返回在线用户列表
     MESSAGE_RET_ONLINE_FRIEND("5"),
     //客户端请求退出
-    MESSAGE_CLIENT_EXIT("6");
+    MESSAGE_CLIENT_EXIT("6"),
+
+    MESSAGE_FILE("7");
+
+
     final String type;
 
     MessageType(String type) {

@@ -35,6 +35,7 @@ public class Server {
         validUsers.put("wangda", new User("wangda", "wangda"));
         validUsers.put("100", new User("100", "123456"));
         validUsers.put("1", new User("1", "1"));
+        validUsers.put("2", new User("2", "2"));
     }
 
     public Server() {
@@ -59,12 +60,11 @@ public class Server {
                     ServerConnectClientThread serverConnectClientThread = new ServerConnectClientThread(user.getUserID(), socket);
                     serverConnectClientThread.setName("serverConnectClientThread");
                     serverConnectClientThread.start();
-
                     //将线程放入集合中
                     ManageServerConnectClientThread.addServerClientThread(user.getUserID(), serverConnectClientThread);
                 } else {
                     //登录失败
-                    System.out.println("用户:" + user.getUserID() + "  密码:" + user.getPassword() + "  验证失败");
+                    System.out.println("用户: [" + user.getUserID() + "]  密码: [" + user.getPassword() + "] 验证失败");
                     message.setMesType(MessageType.MESSAGE_LOGIN_FAIL);
                     objectOutputStream.writeObject(message);
                     //关闭socket

@@ -4,9 +4,7 @@ import common.Message;
 import common.MessageType;
 import common.User;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 
@@ -69,6 +67,74 @@ public class UserClientService {
             //此处是否可以直接用socket? 答案是可以
 //            ObjectOutputStream objectOutputStream = new ObjectOutputStream
 //                    (ManageClientConnectServerThread.getClientServerThread(user.getUserID()).getSocket().getOutputStream());
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+            objectOutputStream.writeObject(message);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    //给服务端发送MESSAGE_CLIENT_EXIT
+    public void logOut() {
+        Message message = new Message();
+        message.setMesType(MessageType.MESSAGE_CLIENT_EXIT);
+        message.setSender(user.getUserID());
+        message.setReceiver("server");
+
+        try {
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+            objectOutputStream.writeObject(message);
+            System.out.println("用户 [" + user.getUserID() + "] 已退出系统");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    //私聊发送消息
+    public void sendMessage(String receiver, String content) {
+        Message message = new Message(user.getUserID(), receiver, content, MessageType.MESSAGE_COMM_MES);
+        try {
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+            objectOutputStream.writeObject(message);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void sendMessageToAll(String contentAll) {
+        Message message = new Message(user.getUserID(), "all", contentAll, MessageType.MESSAGE_COMM_MES);
+        try {
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+            objectOutputStream.writeObject(message);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void sendFile(String src, String des, String sender, String receiver) {
+        Message message = new Message(sender, receiver, "send a file", MessageType.MESSAGE_FILE);
+        message.setSrc(src);
+        message.setDes(des);
+        //读取文件
+        byte[] bytes = new byte[(int) new File(src).length()];
+        FileInputStream fileInputStream = null;
+        try {
+            fileInputStream = new FileInputStream(src);
+            fileInputStream.read(bytes);
+            message.setBytes(bytes);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (fileInputStream != null) {
+                try {
+                    fileInputStream.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+        System.out.println("[" + sender + "] 给 [" + receiver + "] 发送文件：" + src + " 到对方 " + des);
+        try {
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
             objectOutputStream.writeObject(message);
         } catch (IOException e) {
