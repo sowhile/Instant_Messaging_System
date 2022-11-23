@@ -45,7 +45,12 @@ public class UserClientService {
             clientConnectServerThread.start();
             ManageClientConnectServerThread.addClientServerThread(userID, clientConnectServerThread);
             check = true;
+        }
+        //处理重复登录,此处发回的是MESSAGE_COMM_MES可直接判定重复登录
+        else if (message.getMesType().equals(MessageType.MESSAGE_COMM_MES)) {
+            System.out.println("该用户已登录！");
         } else {
+            System.out.println("用户名或密码错误！");
             //登录失败，关闭socket
             try {
                 socket.close();

@@ -25,7 +25,7 @@ public class ClientView {
             boolean loop2 = true;
             System.out.println("===========欢迎登录网络通信系统===========");
             System.out.println("\t\t\t\t1.登录");
-            System.out.println("\t\t\t\t9.退出系统");
+            System.out.println("\t\t\t\t2.退出系统");
 
             System.out.print("请选择：");
             switch (Utility.readChar()) {
@@ -118,10 +118,9 @@ public class ClientView {
                                     break;
                             }
                         }
-                    } else System.out.println("用户名或密码错误！");
-
+                    }
                     break;
-                case '9':
+                case '2':
                     loop = false;
                     break;
             }

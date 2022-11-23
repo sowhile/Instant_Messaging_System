@@ -53,7 +53,17 @@ public class Server {
                 User user = (User) objectInputStream.readObject();
                 //验证
                 Message message = new Message();
-                if (checkUser(user.getUserID(), user.getPassword())) {
+                //如果用户已登录
+                if (ManageServerConnectClientThread.getServerClientThread(user.getUserID()) != null) {
+                    System.out.println("用户: [" + user.getUserID() + "] 重复登录");
+                    message.setMesType(MessageType.MESSAGE_COMM_MES);
+                    message.setContent("该用户已登录，登录失败");
+                    message.setSender("server");
+                    message.setReceiver(user.getUserID());
+                    objectOutputStream.writeObject(message);
+                    //关闭socket
+                    socket.close();
+                } else if (checkUser(user.getUserID(), user.getPassword())) {
                     message.setMesType(MessageType.MESSAGE_LOGIN_SUCCESS);
                     message.setSender("server");
                     message.setReceiver(user.getUserID());
