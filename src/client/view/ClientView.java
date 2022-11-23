@@ -2,6 +2,8 @@ package client.view;
 
 import client.clientservice.UserClientService;
 
+import java.io.File;
+
 /**
  * @author sowhile
  * @version 1.0
@@ -90,6 +92,10 @@ public class ClientView {
                                     System.out.println("请输入文件路径[c:\\\\xxx\\\\xxx\\\\xx.txt](q返回): ");
                                     String filePath = Utility.readString(512);
                                     if (filePath.toLowerCase().charAt(0) == 'q') break;
+                                    if (!new File(filePath).isFile()) {
+                                        System.out.println("文件不存在！");
+                                        break;
+                                    }
                                     System.out.println("请输入对方文件路径[c:\\\\xxx\\\\xxx\\\\xx.txt](q返回): ");
                                     String filePathDes = Utility.readString(512);
                                     if (filePathDes.toLowerCase().charAt(0) == 'q') break;
@@ -129,7 +135,6 @@ public class ClientView {
         System.out.println("\t\t\t4.发送文件");
         System.out.println("\t\t\t5.退出用户");
         System.out.println("\t\t\t6.退出系统");
-
         System.out.print("请输入(q返回): ");
     }
 }

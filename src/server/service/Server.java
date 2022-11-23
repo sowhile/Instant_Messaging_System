@@ -40,6 +40,8 @@ public class Server {
 
     public Server() {
         System.out.println("服务端在9999端口监听...");
+        //启动推送服务
+        new Thread(new SendNewsToAllThread()).start();
         try {
             this.serverSocket = new ServerSocket(9999);
             //一直监听

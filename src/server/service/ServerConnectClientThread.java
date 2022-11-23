@@ -28,6 +28,14 @@ public class ServerConnectClientThread extends Thread {
         this.socket = socket;
     }
 
+    public String getUserID() {
+        return userID;
+    }
+
+    public Socket getSocket() {
+        return socket;
+    }
+
     @Override
     public void run() {
         while (loop) {
@@ -48,8 +56,7 @@ public class ServerConnectClientThread extends Thread {
                     objectOutputStream.writeObject(messageR);
                 } else if (message.getMesType() == MessageType.MESSAGE_CLIENT_EXIT) {
                     System.out.println("[" + message.getSender() + "] 客户端退出");
-                    ObjectOutputStream objectOutputStream = new ObjectOutputStream
-                            (ManageServerConnectClientThread.getServerClientThread(message.getSender()).socket.getOutputStream());
+                    ObjectOutputStream objectOutputStream = new ObjectOutputStream(ManageServerConnectClientThread.getServerClientThread(message.getSender()).socket.getOutputStream());
                     objectOutputStream.writeObject(new Message("server", message.getSender(), "exit", MessageType.MESSAGE_CLIENT_EXIT));
                     //从集合中移除该线程
                     ManageServerConnectClientThread.removeServerClientThread(userID);
@@ -60,18 +67,16 @@ public class ServerConnectClientThread extends Thread {
                 } else if (message.getMesType() == MessageType.MESSAGE_COMM_MES) {
                     //群发
                     if (message.getReceiver().equals("all")) {
+                        System.out.println("[" + message.getSender() + "] 群发了一条消息");
                         HashMap<String, ServerConnectClientThread> allThread = ManageServerConnectClientThread.getAllThread();
                         for (Map.Entry<String, ServerConnectClientThread> next : allThread.entrySet()) {
                             if (!next.getKey().equals(message.getSender())) {
                                 ObjectOutputStream objectOutputStream = new ObjectOutputStream(next.getValue().socket.getOutputStream());
-                                objectOutputStream.writeObject(new Message(message.getSender() + "(群发)", next.getKey(),
-                                        message.getContent(), MessageType.MESSAGE_COMM_MES));
+                                objectOutputStream.writeObject(new Message(message.getSender() + "(群发)", next.getKey(), message.getContent(), MessageType.MESSAGE_COMM_MES));
                             }
                         }
-                        System.out.println("[" + message.getSender() + "] 群发了一条消息");
                         Message messageR = new Message("server", message.getSender(), "群发成功", MessageType.MESSAGE_COMM_MES);
-                        ObjectOutputStream objectOutputStream = new ObjectOutputStream
-                                (ManageServerConnectClientThread.getServerClientThread(message.getSender()).socket.getOutputStream());
+                        ObjectOutputStream objectOutputStream = new ObjectOutputStream(ManageServerConnectClientThread.getServerClientThread(message.getSender()).socket.getOutputStream());
                         objectOutputStream.writeObject(messageR);
                     }
                     //没有接收的用户
@@ -82,23 +87,20 @@ public class ServerConnectClientThread extends Thread {
                     }
                     //私聊
                     else {
-                        ObjectOutputStream objectOutputStream = new ObjectOutputStream
-                                (ManageServerConnectClientThread.getServerClientThread(message.getReceiver()).socket.getOutputStream());
-                        Message messageT = new Message(message.getSender(), message.getReceiver(),
-                                message.getContent(), MessageType.MESSAGE_COMM_MES);
+                        ObjectOutputStream objectOutputStream = new ObjectOutputStream(ManageServerConnectClientThread.getServerClientThread(message.getReceiver()).socket.getOutputStream());
+                        Message messageT = new Message(message.getSender(), message.getReceiver(), message.getContent(), MessageType.MESSAGE_COMM_MES);
                         objectOutputStream.writeObject(messageT);
 
                         System.out.println("[" + message.getSender() + "] 给 [" + message.getReceiver() + "] 发送了一条消息");
-                        Message messageR = new Message("server", message.getSender(), "发送成功",
-                                MessageType.MESSAGE_COMM_MES);
+                        Message messageR = new Message("server", message.getSender(), "发送成功", MessageType.MESSAGE_COMM_MES);
                         ObjectOutputStream objectOutputStreamR = new ObjectOutputStream(socket.getOutputStream());
                         objectOutputStreamR.writeObject(messageR);
                     }
                 }
                 //文件
                 else if (message.getMesType() == MessageType.MESSAGE_FILE) {
-                    ObjectOutputStream objectOutputStream = new ObjectOutputStream
-                            (ManageServerConnectClientThread.getServerClientThread(message.getReceiver()).socket.getOutputStream());
+                    System.out.println("[" + message.getSender() + "] 给 [" + message.getReceiver() + "] 从 " + message.getSrc() + " 发送到 " + message.getDes());
+                    ObjectOutputStream objectOutputStream = new ObjectOutputStream(ManageServerConnectClientThread.getServerClientThread(message.getReceiver()).socket.getOutputStream());
                     objectOutputStream.writeObject(message);
                 }
             } catch (IOException | ClassNotFoundException e) {
