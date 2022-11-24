@@ -31,7 +31,7 @@ public class Server {
      * HashMap是线程不安全的
      */
     private static final ConcurrentHashMap<String, User> validUsers = new ConcurrentHashMap<>();
-    //离线发消息
+    //离线发消息和文件的缓存
     private static final ConcurrentHashMap<String, ArrayList<Message>> offLine = new ConcurrentHashMap<>();
 
     static {
@@ -62,7 +62,7 @@ public class Server {
 
     public Server() {
         System.out.println("服务端在9999端口监听...");
-        //启动推送服务
+        //启动消息推送服务
         new Thread(new SendNewsToAllThread()).start();
         try {
             this.serverSocket = new ServerSocket(9999);

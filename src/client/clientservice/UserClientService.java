@@ -12,7 +12,7 @@ import java.net.Socket;
  * @author sowhile
  * @version 1.0
  * <p>
- * 完成用户登录验证和注册等
+ * 完成用户登录验证和注册等功能
  * 2022/11/22 16:09
  */
 public class UserClientService {
