@@ -48,7 +48,7 @@ public class ClientConnectServerThread extends Thread {
                 else if (message.getMesType() == MessageType.MESSAGE_COMM_MES) {
                     System.out.println("\n===============消息窗口===============");
                     System.out.println("[" + message.getSender() + "] 对你说：" + message.getContent());
-                    if (!(message.getContent().equals("发送成功") || message.getContent().equals("没有该用户!"))) {
+                    if (!(message.getContent().equals("发送成功") || message.getContent().equals("没有该用户!") || message.getContent().equals("该用户不在线，已发送离线消息") || message.getContent().equals("该用户不在线，已发送离线文件"))) {
                         System.out.println("===============欢迎, " + message.getReceiver() + "===============");
                         ClientView.secondMenu();
                     }

@@ -9,6 +9,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -30,12 +31,33 @@ public class Server {
      * HashMap是线程不安全的
      */
     private static final ConcurrentHashMap<String, User> validUsers = new ConcurrentHashMap<>();
+    //离线发消息
+    private static final ConcurrentHashMap<String, ArrayList<Message>> offLine = new ConcurrentHashMap<>();
 
     static {
         validUsers.put("wangda", new User("wangda", "wangda"));
         validUsers.put("100", new User("100", "123456"));
         validUsers.put("1", new User("1", "1"));
         validUsers.put("2", new User("2", "2"));
+    }
+
+    public static ConcurrentHashMap<String, User> getValidUsers() {
+        return validUsers;
+    }
+
+    public static void addOfflineMessage(String receiver, Message message) {
+        if (offLine.get(receiver) == null) {
+            ArrayList<Message> messages = new ArrayList<>();
+            messages.add(message);
+            offLine.put(receiver, messages);
+        } else {
+            ArrayList<Message> messages = offLine.get(receiver);
+            messages.add(message);
+        }
+    }
+
+    public static ConcurrentHashMap<String, ArrayList<Message>> getOffLine() {
+        return offLine;
     }
 
     public Server() {

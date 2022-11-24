@@ -7,8 +7,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author sowhile
@@ -38,6 +40,22 @@ public class ServerConnectClientThread extends Thread {
 
     @Override
     public void run() {
+        //用户一上线就发送离线消息
+        ConcurrentHashMap<String, ArrayList<Message>> offLine = Server.getOffLine();
+        ConcurrentHashMap.KeySetView<String, ArrayList<Message>> strings = offLine.keySet();
+        for (String string : strings) {
+            if (string.equals(userID)) {
+                ArrayList<Message> messages = offLine.get(string);
+                for (Message message : messages) {
+                    try {
+                        ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+                        objectOutputStream.writeObject(message);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        }
         while (loop) {
             System.out.println("服务器和客户端 [" + userID + "] 保持通信，读取数据...");
             try {
@@ -64,7 +82,9 @@ public class ServerConnectClientThread extends Thread {
                     socket.close();
                     //退出线程
                     break;
-                } else if (message.getMesType() == MessageType.MESSAGE_COMM_MES) {
+                }
+                //收到普通消息MESSAGE_COMM_MES
+                else if (message.getMesType() == MessageType.MESSAGE_COMM_MES) {
                     //群发
                     if (message.getReceiver().equals("all")) {
                         System.out.println("[" + message.getSender() + "] 群发了一条消息");
@@ -79,7 +99,17 @@ public class ServerConnectClientThread extends Thread {
                         ObjectOutputStream objectOutputStream = new ObjectOutputStream(ManageServerConnectClientThread.getServerClientThread(message.getSender()).socket.getOutputStream());
                         objectOutputStream.writeObject(messageR);
                     }
-                    //没有接收的用户
+                    //没有在线的用户，离线发消息
+                    else if (ManageServerConnectClientThread.getServerClientThread(message.getReceiver()) == null && Server.getValidUsers().get(message.getReceiver()) != null) {
+                        System.out.println("[" + message.getSender() + "] 给 [" + message.getReceiver() + "] 发送了一条离线消息");
+                        //将消息保存到数据库
+                        Server.addOfflineMessage(message.getReceiver(), message);
+
+                        Message messageR = new Message("server", message.getSender(), "该用户不在线，已发送离线消息", MessageType.MESSAGE_COMM_MES);
+                        ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+                        objectOutputStream.writeObject(messageR);
+                    }
+                    //没有该用户
                     else if (ManageServerConnectClientThread.getServerClientThread(message.getReceiver()) == null) {
                         Message messageR = new Message("server", message.getSender(), "没有该用户!", MessageType.MESSAGE_COMM_MES);
                         ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
@@ -99,9 +129,28 @@ public class ServerConnectClientThread extends Thread {
                 }
                 //文件
                 else if (message.getMesType() == MessageType.MESSAGE_FILE) {
-                    System.out.println("[" + message.getSender() + "] 给 [" + message.getReceiver() + "] 从 " + message.getSrc() + " 发送到 " + message.getDes());
-                    ObjectOutputStream objectOutputStream = new ObjectOutputStream(ManageServerConnectClientThread.getServerClientThread(message.getReceiver()).socket.getOutputStream());
-                    objectOutputStream.writeObject(message);
+                    //没有在线用户，离线发文件
+                    if (ManageServerConnectClientThread.getServerClientThread(message.getReceiver()) == null && Server.getValidUsers().get(message.getReceiver()) != null) {
+                        System.out.println("[" + message.getSender() + "] 给 [" + message.getReceiver() + "] 发送了一个离线文件");
+                        //将消息保存到数据库
+                        Server.addOfflineMessage(message.getReceiver(), message);
+
+                        Message messageR = new Message("server", message.getSender(), "该用户不在线，已发送离线文件", MessageType.MESSAGE_COMM_MES);
+                        ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+                        objectOutputStream.writeObject(messageR);
+                    }
+                    //没有该用户
+                    else if (ManageServerConnectClientThread.getServerClientThread(message.getReceiver()) == null) {
+                        Message messageR = new Message("server", message.getSender(), "没有该用户!", MessageType.MESSAGE_COMM_MES);
+                        ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+                        objectOutputStream.writeObject(messageR);
+                    }
+                    //私聊
+                    else {
+                        System.out.println("[" + message.getSender() + "] 给 [" + message.getReceiver() + "] 从 " + message.getSrc() + " 发送到 " + message.getDes());
+                        ObjectOutputStream objectOutputStream = new ObjectOutputStream(ManageServerConnectClientThread.getServerClientThread(message.getReceiver()).socket.getOutputStream());
+                        objectOutputStream.writeObject(message);
+                    }
                 }
             } catch (IOException | ClassNotFoundException e) {
                 throw new RuntimeException(e);
