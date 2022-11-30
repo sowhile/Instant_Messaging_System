@@ -1,5 +1,4 @@
-package client.view;
-
+package server.utils;
 
 import java.util.Scanner;
 
@@ -7,23 +6,29 @@ import java.util.Scanner;
  * 工具类的作用:
  * 处理各种情况的用户输入，并且能够按照程序员的需求，得到用户的控制台输入。
  */
-public class Utility {
+public class InputUtility {
     private static final Scanner scanner = new Scanner(System.in);
 
 
     /**
-     * 功能：读取键盘输入的一个菜单选项，值：1——5的范围
+     * 功能：从控制台读取键盘输入的一个菜单选项
      *
-     * @return 1——5
+     * @param num 菜单数
+     * @return char 返回用户选择
      */
-    public static char readMenuSelection() {
+    public static char readMenuSelection(int num) {
         char c;
-        for (; ; ) {
+        while (true) {
             String str = readKeyBoard(1, false);//包含一个字符的字符串
             c = str.charAt(0);//将字符串转换成字符char类型
-            if (c != '1' && c != '2' && c != '3' && c != '4' && c != '5') {
-                System.out.print("选择错误，请重新输入：");
-            } else break;
+            int i = 1;
+            //验证是否合法
+            for (; i <= num; i++)
+                if (c == String.valueOf(i).charAt(0)) break;
+            if (i == num + 1)
+//                System.out.print("输入错误，请输入1~" + num + "之间的数:");
+                System.out.print("输入错误,请重新输入:");
+            else break;
         }
         return c;
     }
@@ -44,7 +49,6 @@ public class Utility {
      * @param defaultValue 指定的默认值
      * @return 默认值或输入的字符
      */
-
     public static char readChar(char defaultValue) {
         String str = readKeyBoard(1, true);//要么是空字符串，要么是一个字符
         return (str.length() == 0) ? defaultValue : str.charAt(0);
@@ -83,7 +87,7 @@ public class Utility {
                 return defaultValue;
             }
 
-            //异常处理...
+            //异常处理
             try {
                 n = Integer.parseInt(str);
                 break;
@@ -100,7 +104,6 @@ public class Utility {
      * @param limit 限制的长度
      * @return 指定长度的字符串
      */
-
     public static String readString(int limit) {
         return readKeyBoard(limit, false);
     }
@@ -112,7 +115,6 @@ public class Utility {
      * @param defaultValue 指定的默认值
      * @return 指定长度的字符串
      */
-
     public static String readString(int limit, String defaultValue) {
         String str = readKeyBoard(limit, true);
         return str.equals("") ? defaultValue : str;
@@ -125,21 +127,20 @@ public class Utility {
      *
      * @return Y或N
      */
-    public static char readConfirmSelection() {
-        System.out.println("请输入你的选择(Y/N)");
+    public static boolean confirmSelection() {
+        System.out.print("请输入你的选择(Y/N):");
         char c;
-        for (; ; ) {//无限循环
+        while (true) {//无限循环
             //在这里，将接受到字符，转成了大写字母
             //y => Y n=>N
             String str = readKeyBoard(1, false).toUpperCase();
             c = str.charAt(0);
-            if (c == 'Y' || c == 'N') {
+            if (c == 'Y' || c == 'N')
                 break;
-            } else {
-                System.out.print("选择错误，请重新输入：");
-            }
+            else
+                System.out.print("选择错误,请重新输入:");
         }
-        return c;
+        return c == 'Y';
     }
 
     /**
@@ -161,16 +162,19 @@ public class Utility {
         while (scanner.hasNextLine()) {
             line = scanner.nextLine();//读取这一行
 
-            //如果line.length=0, 即用户没有输入任何内容，直接回车
+            //如果line.length = 0, 即用户没有输入任何内容，直接回车
             if (line.length() == 0) {
                 if (blankReturn) return line;//如果blankReturn=true,可以返回空串
-                else continue; //如果blankReturn=false,不接受空串，必须输入内容
+                else {
+                    System.out.print("输入错误,请重新输入:");
+                    continue;
+                } //如果blankReturn=false,不接受空串，必须输入内容
             }
 
             //如果用户输入的内容大于了 limit，就提示重写输入
             //如果用户如的内容 >0 <= limit ,我就接受
-            if (line.length() < 1 || line.length() > limit) {
-                System.out.print("输入长度（不能大于" + limit + "）错误，请重新输入：");
+            if (line.length() > limit) {
+                System.out.print("输入长度错误(不能大于" + limit + "),请重新输入:");
                 continue;
             }
             break;
