@@ -100,7 +100,7 @@ public class ServerConnectClientThread extends Thread {
                         objectOutputStream.writeObject(messageR);
                     }
                     //没有在线的用户，离线发消息
-                    else if (ManageServerConnectClientThread.getServerClientThread(message.getReceiver()) == null && Server.getValidUsers().get(message.getReceiver()) != null) {
+                    else if (ManageServerConnectClientThread.getServerClientThread(message.getReceiver()) == null && Server.isValidUsers(message.getReceiver())) {
                         System.out.println("[" + message.getSender() + "] 给 [" + message.getReceiver() + "] 发送了一条离线消息");
                         //将消息保存到数据库
                         Server.addOfflineMessage(message.getReceiver(), message);
@@ -130,7 +130,7 @@ public class ServerConnectClientThread extends Thread {
                 //文件
                 else if (message.getMesType() == MessageType.MESSAGE_FILE) {
                     //没有在线用户，离线发文件
-                    if (ManageServerConnectClientThread.getServerClientThread(message.getReceiver()) == null && Server.getValidUsers().get(message.getReceiver()) != null) {
+                    if (ManageServerConnectClientThread.getServerClientThread(message.getReceiver()) == null && Server.isValidUsers(message.getReceiver())) {
                         System.out.println("[" + message.getSender() + "] 给 [" + message.getReceiver() + "] 发送了一个离线文件");
                         //将消息保存到数据库
                         Server.addOfflineMessage(message.getReceiver(), message);

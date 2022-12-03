@@ -7,7 +7,7 @@ package server.utils;
  */
 public class TestUtils {
     public static void main(String[] args) {
-        String password = "wd0531";
+        String password = "100";
         long start = System.currentTimeMillis();
         String hashed = BCrypt.hashpw(password, BCrypt.gensalt(5));
         System.out.println(hashed);

@@ -3,6 +3,8 @@ package server.service;
 import common.Message;
 import common.MessageType;
 import common.User;
+import server.dataservice.UserService;
+import server.utils.BCrypt;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -25,24 +27,21 @@ public class Server {
     }
 
     private ServerSocket serverSocket;
+    private static UserService userService = new UserService();
 
     /**
      * 创建一个集合，存放多个用户
      * HashMap是线程不安全的
      */
-    private static final ConcurrentHashMap<String, User> validUsers = new ConcurrentHashMap<>();
+
     //离线发消息和文件的缓存
     private static final ConcurrentHashMap<String, ArrayList<Message>> offLine = new ConcurrentHashMap<>();
 
-    static {
-        validUsers.put("wangda", new User("wangda", "wangda"));
-        validUsers.put("100", new User("100", "123456"));
-        validUsers.put("1", new User("1", "1"));
-        validUsers.put("2", new User("2", "2"));
-    }
-
-    public static ConcurrentHashMap<String, User> getValidUsers() {
-        return validUsers;
+    //    public static ConcurrentHashMap<String, User> getValidUsers() {
+//        return validUsers;
+//    }
+    public static boolean isValidUsers(String userName) {
+        return userService.getUser(userName) == null;
     }
 
     public static void addOfflineMessage(String receiver, Message message) {
@@ -117,10 +116,10 @@ public class Server {
     }
 
     private boolean checkUser(String userID, String pwd) {
-        User user = validUsers.get(userID);
-        //用户名是否存在
-        if (user == null) return false;
+        String password = userService.getPassword(userID);
+        if (password == null)
+            return false;
         //密码是否正确
-        return user.getPassword().equals(pwd);
+        return BCrypt.checkpw(pwd, userService.getPassword(userID));
     }
 }
